@@ -78,31 +78,55 @@ class NoteFeedView extends StatelessWidget {
                             color: colorScheme.primary,
                           ),
                         ),
-                      if (note.amount != null)
+                      if (note.amount != null || note.note.trim().isNotEmpty)
                         Positioned(
-                          top: 16,
-                          right: 16,
-                          child: NotePreviewDisplayChip(
-                            icon: note.amount! >= 0
-                                ? Icons.arrow_upward_rounded
-                                : Icons.arrow_downward_rounded,
-                            label: formatAmount(note.amount!),
-                            color: note.amount! >= 0
-                                ? const Color(0xFF53D18C)
-                                : const Color(0xFFFF8E7D),
-                          ),
-                        ),
-                      if (note.note.trim().isNotEmpty)
-                        Positioned(
-                          left: 16,
-                          right: 16,
-                          bottom: 16,
+                          left: 24,
+                          right: 24,
+                          bottom: 24,
                           child: Center(
-                            child: NotePreviewDisplayChip(
-                              icon: Icons.auto_awesome_outlined,
-                              label: note.note.trim(),
-                              color: colorScheme.primary,
-                              maxWidth: 320,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 14,
+                              ),
+                              decoration: BoxDecoration(
+                                color: colorScheme.surface.withOpacity(0.85),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(
+                                  color: colorScheme.outlineVariant.withOpacity(
+                                    0.5,
+                                  ),
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (note.amount != null)
+                                    Text(
+                                      formatVND(note.amount!),
+                                      style: theme.textTheme.headlineSmall
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: note.amount! >= 0
+                                                ? const Color(0xFF53D18C)
+                                                : const Color(0xFFFF8E7D),
+                                          ),
+                                    ),
+                                  if (note.amount != null &&
+                                      note.note.trim().isNotEmpty)
+                                    const SizedBox(height: 6),
+                                  if (note.note.trim().isNotEmpty)
+                                    Text(
+                                      note.note.trim(),
+                                      style: theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                            color: colorScheme.onSurface,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

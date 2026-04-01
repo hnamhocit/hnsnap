@@ -1,4 +1,5 @@
 {
 	"cmake.ignoreCMakeListsMissing": true,
-	"kiroAgent.configureMCP": "Disabled"
+	"kiroAgent.configureMCP": "Disabled",
+	"java.configuration.updateBuildConfiguration": "interactive"
 }

@@ -285,7 +285,7 @@ extension on _HomeScreenState {
       _captionController.text = note.note;
       _priceController.text = note.amount == null
           ? ''
-          : formatAmount(note.amount!);
+          : note.amount!.toString();
     });
 
     await _syncCameraActivity();
@@ -451,7 +451,7 @@ extension on _HomeScreenState {
     try {
       final shareText = [
         if (note.note.trim().isNotEmpty) note.note.trim(),
-        if (note.amount != null) formatAmount(note.amount!),
+        if (note.amount != null) formatVND(note.amount!),
       ].join('\n');
 
       await Share.shareXFiles([

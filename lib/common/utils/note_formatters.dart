@@ -1,4 +1,5 @@
 import 'package:hnsnap/features/notes/domain/entities/note_query.dart';
+import 'package:intl/intl.dart';
 
 String formatDateTime(DateTime value) {
   final now = DateTime.now();
@@ -18,12 +19,9 @@ String formatDateTime(DateTime value) {
   return '${_twoDigits(value.day)}/${_twoDigits(value.month)}/${value.year} $time';
 }
 
-String formatAmount(double amount) {
-  final absolute = amount.abs();
-  final formatted = absolute % 1 == 0
-      ? _formatWholeNumber(absolute.toInt())
-      : _formatDecimalNumber(absolute);
-  return amount >= 0 ? formatted : '-$formatted';
+String formatVND(double amount) {
+  final formatter = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
+  return formatter.format(amount);
 }
 
 String describeDateFilter(NoteQuery query) {
@@ -69,13 +67,6 @@ String _formatWholeNumber(int value) {
   }
 
   return buffer.toString();
-}
-
-String _formatDecimalNumber(double value) {
-  final parts = value.toStringAsFixed(2).split('.');
-  final whole = _formatWholeNumber(int.parse(parts.first));
-  final fraction = parts.last == '00' ? '' : '.${parts.last}';
-  return '$whole$fraction';
 }
 
 String _twoDigits(int value) {

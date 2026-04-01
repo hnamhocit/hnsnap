@@ -84,7 +84,7 @@ class HomeHeader extends StatelessWidget implements PreferredSizeWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '$streakCount ngày liên tiếp',
+                        '$streakCount ngày',
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: colorScheme.onPrimaryContainer,
                           fontWeight: FontWeight.w700,

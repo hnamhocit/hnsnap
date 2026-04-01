@@ -3,7 +3,7 @@ import 'package:hnsnap/common/utils/note_formatters.dart';
 import 'package:hnsnap/features/notes/domain/entities/note_entry.dart';
 import 'package:hnsnap/features/notes/domain/entities/note_query.dart';
 import 'package:hnsnap/features/notes/domain/repositories/notes_repository.dart';
-import 'package:hnsnap/features/notes/presentation/widgets/note_filter_sheet.dart';
+import 'package:hnsnap/features/notes/presentation/screens/note_filter_screen.dart';
 import 'package:hnsnap/features/notes/presentation/widgets/note_media_view.dart';
 import 'package:hnsnap/features/notes/presentation/widgets/note_shared_widgets.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -73,12 +73,14 @@ class _NoteCatalogScreenState extends State<NoteCatalogScreen> {
     }
   }
 
-  Future<void> _openFilterSheet() async {
-    final result = await showModalBottomSheet<NoteQuery>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      builder: (context) => NoteFilterSheet(initialQuery: _query),
+  Future<void> _openFilterScreen() async {
+    final result = await Navigator.of(context).push<NoteQuery>(
+      MaterialPageRoute(
+        builder: (context) => NoteFilterScreen(
+          initialQuery: _query,
+          notesRepository: widget.notesRepository,
+        ),
+      ),
     );
 
     if (!mounted || result == null) {
@@ -171,7 +173,7 @@ class _NoteCatalogScreenState extends State<NoteCatalogScreen> {
         title: const Text('Thư viện ghi chú'),
         actions: [
           IconButton(
-            onPressed: _openFilterSheet,
+            onPressed: _openFilterScreen,
             icon: const Icon(LucideIcons.slidersHorizontal),
             tooltip: 'Lọc thư viện ghi chú',
           ),
@@ -226,8 +228,8 @@ class _NoteCatalogScreenState extends State<NoteCatalogScreen> {
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 3,
-                                  crossAxisSpacing: 10,
-                                  mainAxisSpacing: 10,
+                                  crossAxisSpacing: 4,
+                                  mainAxisSpacing: 4,
                                 ),
                             itemBuilder: (context, index) {
                               final note = _notes[index];
@@ -247,7 +249,7 @@ class _NoteCatalogScreenState extends State<NoteCatalogScreen> {
                                   onLongPress: () => _openNoteActions(note),
                                   child: Ink(
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(22),
+                                      borderRadius: BorderRadius.circular(24),
                                       border: Border.all(
                                         color: isActive
                                             ? theme.colorScheme.primary
@@ -256,7 +258,7 @@ class _NoteCatalogScreenState extends State<NoteCatalogScreen> {
                                       ),
                                     ),
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(21),
+                                      borderRadius: BorderRadius.circular(24),
                                       child: Stack(
                                         fit: StackFit.expand,
                                         children: [
@@ -274,65 +276,108 @@ class _NoteCatalogScreenState extends State<NoteCatalogScreen> {
                                               color: theme
                                                   .colorScheme
                                                   .surfaceContainerHigh,
-                                              child: Stack(
-                                                fit: StackFit.expand,
-                                                children: [
-                                                  Center(
-                                                    child: Icon(
-                                                      Icons
-                                                          .play_circle_outline_rounded,
-                                                      size: 34,
-                                                      color: theme
-                                                          .colorScheme
-                                                          .onSurface
-                                                          .withValues(
-                                                            alpha: 0.92,
-                                                          ),
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons
+                                                      .play_circle_outline_rounded,
+                                                  size: 34,
+                                                  color: theme
+                                                      .colorScheme
+                                                      .onSurface
+                                                      .withValues(alpha: 0.92),
+                                                ),
+                                              ),
+                                            ),
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              24,
+                                            ),
+                                            child: Stack(
+                                              children: [
+                                                if (note.mediaType.isImage)
+                                                  NoteMediaView(
+                                                    mediaPath: note.mediaPath,
+                                                    mediaType: note.mediaType,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          24,
+                                                        ),
+                                                    errorLabel:
+                                                        'Không đọc được media đã lưu.',
+                                                  )
+                                                else
+                                                  ColoredBox(
+                                                    color: theme
+                                                        .colorScheme
+                                                        .surfaceContainerHigh,
+                                                    child: Center(
+                                                      child: Icon(
+                                                        Icons
+                                                            .play_circle_outline_rounded,
+                                                        size: 34,
+                                                        color: theme
+                                                            .colorScheme
+                                                            .onSurface
+                                                            .withValues(
+                                                              alpha: 0.92,
+                                                            ),
+                                                      ),
                                                     ),
                                                   ),
+                                                if (note.amount != null)
                                                   Positioned(
-                                                    left: 10,
-                                                    right: 10,
-                                                    bottom: 10,
-                                                    child: DecoratedBox(
+                                                    bottom: 6,
+                                                    left: 6,
+                                                    child: Container(
                                                       decoration: BoxDecoration(
                                                         color: theme
                                                             .colorScheme
-                                                            .surfaceContainerLow
+                                                            .surface
                                                             .withValues(
-                                                              alpha: 0.88,
+                                                              alpha: 0.92,
                                                             ),
                                                         borderRadius:
                                                             BorderRadius.circular(
-                                                              999,
+                                                              12,
                                                             ),
                                                       ),
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.symmetric(
-                                                              horizontal: 10,
-                                                              vertical: 6,
-                                                            ),
-                                                        child: Text(
-                                                          'Video',
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: TextStyle(
-                                                            color: theme
-                                                                .colorScheme
-                                                                .onSurface,
-                                                            fontSize: 11,
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                            letterSpacing: 0.6,
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 6,
+                                                            vertical: 2,
                                                           ),
+                                                      child: Text(
+                                                        formatVND(
+                                                          note.amount ?? 0,
                                                         ),
+                                                        style: theme
+                                                            .textTheme
+                                                            .labelMedium
+                                                            ?.copyWith(
+                                                              color: theme
+                                                                  .colorScheme
+                                                                  .onSurface,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
                                                       ),
                                                     ),
                                                   ),
-                                                ],
-                                              ),
+                                                if (isActive)
+                                                  DecoratedBox(
+                                                    decoration: BoxDecoration(
+                                                      color: theme
+                                                          .colorScheme
+                                                          .primary
+                                                          .withValues(
+                                                            alpha: 0.18,
+                                                          ),
+                                                    ),
+                                                  ),
+                                              ],
                                             ),
+                                          ),
                                           if (isActive)
                                             DecoratedBox(
                                               decoration: BoxDecoration(

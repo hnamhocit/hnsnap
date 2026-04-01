@@ -10,7 +10,7 @@ class App extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'hnsnap',
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
       theme: lightTheme,
       darkTheme: darkTheme,
       routerConfig: router,

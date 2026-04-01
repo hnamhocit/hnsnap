@@ -1,3 +1,7 @@
+// BẮT BUỘC: Đưa 2 dòng import này lên trên cùng
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -6,7 +10,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.hnsnap"
+    namespace = "vn.hnamhocit.hnsnap.hnsnap"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -16,27 +20,44 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    // Đã fix lỗi 1: Viết gọn lại thành "17"
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        jvmTarget = "17"
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.hnsnap"
+        applicationId = "vn.hnamhocit.hnsnap.hnsnap"
         multiDexEnabled = true
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    // Đã fix lỗi 2 & 3: Xóa chữ java. đi vì đã import ở trên
+    val keystoreProperties = Properties()
+    val keystorePropertiesFile = rootProject.file("key.properties")
+    if (keystorePropertiesFile.exists()) {
+        keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+    }
+
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            val keystoreFile = keystoreProperties.getProperty("storeFile")
+            if (keystoreFile != null) {
+                storeFile = file(keystoreFile)
+            }
+            storePassword = keystoreProperties.getProperty("storePassword")
+        }
+    }
+
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
 }
